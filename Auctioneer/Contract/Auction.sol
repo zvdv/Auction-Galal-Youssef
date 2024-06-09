@@ -37,7 +37,7 @@ contract Auction {
     address public winner;
     uint public highestBid;    
     //Constructor = Setting all Parameters and auctioneerAddress as well
-    function Auction(uint _bidBlockNumber, uint _revealBlockNumber, uint _winnerPaymentBlockNumber, uint _maxBiddersCount, uint _registerationFees, string _auctioneerRSAPublicKey) public {
+    constructor(uint _bidBlockNumber, uint _revealBlockNumber, uint _winnerPaymentBlockNumber, uint _maxBiddersCount, uint _registerationFees, string _auctioneerRSAPublicKey) public {
         auctioneerAddress = msg.sender;
         bidBlockNumber = block.number + _bidBlockNumber;
         revealBlockNumber = bidBlockNumber + _revealBlockNumber;
@@ -85,13 +85,13 @@ contract Auction {
         }
     }    
     function zkpVerifyCase1(uint w1, uint r1, uint w2, uint r2) public modVerify {
-        require((uint(block.blockhash(zkpCommit.blockNumber))&0x1) == 0); //valid case
+        require((uint(blockhash(zkpCommit.blockNumber))&0x1) == 0); //valid case
         require(maximumBidValue == (w1-w2) || maximumBidValue == (w2-w1));
         require(pedersenVerify(w1, r1, zkpCommit.cW1) && pedersenVerify(w2,r2,zkpCommit.cW2));
         finishVerify();
     }
     function zkpVerifyCase2(uint m, uint n, uint j) public modVerify {
-        require((uint(block.blockhash(zkpCommit.blockNumber))&0x1) == 1); //valid case
+        require((uint(blockhash(zkpCommit.blockNumber))&0x1) == 1); //valid case
         bytes memory commitXWj = pedersenCommit(m, n);
         if (states == VerificationStates.ChallengeBid) {
             if (j == 1 ) {
